@@ -1,0 +1,7 @@
+lab3
+lab3.o
+primlib.o
+controller.o
+graphics.o
+structs.o
+.vscode/

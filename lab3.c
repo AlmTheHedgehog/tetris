@@ -9,11 +9,12 @@ int main(){
     if (gfx_init())
         exit(3);
 
-    short int cur_screen = 0;
-
+    short int cur_screen = 0, game_field[FIELD_WIDTH][FIELD_HEIGHT], *game_field_ptr;//game_field(WIDTHxHEIGHT)
+    game_field_ptr = &game_field[0][0];
+    init_matrix(game_field_ptr);
     while((cur_screen == 0) || (cur_screen == 1)){
         if(cur_screen == 0){
-
+            main_draw(game_field_ptr);
         }else{
         }
         exit_check(&cur_screen);

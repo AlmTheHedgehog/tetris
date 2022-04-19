@@ -1,6 +1,6 @@
 all: lab3
 
-lab2: lab3.o primlib.o structs.o controller.o graphics.o 
+lab3: lab3.o primlib.o structs.o controller.o graphics.o 
 	gcc -fsanitize=undefined -g $^ -o $@  -lSDL2_gfx `sdl2-config --libs` -lm
 
 .c.o: 
@@ -8,7 +8,7 @@ lab2: lab3.o primlib.o structs.o controller.o graphics.o
 
 primlib.o: primlib.c primlib.h
 
-testlib.o: lab2.c primlib.h
+lab3.o: lab3.c primlib.h
 
 struct.o: structs.c structs.h
 

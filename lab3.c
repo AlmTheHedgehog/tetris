@@ -14,7 +14,9 @@ int main(){
     init_matrix(game_field_ptr);
     while((cur_screen == 0) || (cur_screen == 1)){
         if(cur_screen == 0){
-            main_draw(game_field_ptr);
+            main_draw_static(game_field_ptr);
+            main_events_check(&cur_screen, game_field_ptr);
+            draw_finish();
         }else{
         }
         exit_check(&cur_screen);

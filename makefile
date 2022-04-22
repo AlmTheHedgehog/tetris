@@ -10,7 +10,7 @@ primlib.o: primlib.c primlib.h
 
 lab3.o: lab3.c primlib.h
 
-struct.o: structs.c structs.h
+struct.o: structs.c structs.h 
 
 controller.o: controller.c controller.h
 

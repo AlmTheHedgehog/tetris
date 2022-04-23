@@ -25,7 +25,7 @@ void main_events_check(short int *cur_screen, short int* game_field){
                 *cur_screen = 1;
             }
         }else{
-            move_events(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right, move_dir);
+            move_events(game_field, cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, move_dir);
             move_dir = 0;
         }
     }else{
@@ -85,40 +85,64 @@ void length_of_piece(short int piece_left_top_bt_right[4], short int cur_piece_k
 }
 
 void but_press_check(short int *move_dir, short int animation_del){
-    if(gfx_isKeyDown(SDLK_LEFT)){
-        if((*move_dir == 0) && (animation_del > ((DELEY_BTW_ANIM/4)*3))){
+    //move_dir 0-none, 1-left, 2-right, 3-down, 4-rotate
+    if((*move_dir == 0) && (animation_del > ((DELEY_BTW_ANIM/4)*3))){
+        if(gfx_isKeyDown(SDLK_LEFT)){
             *move_dir = 1;
-        }
-    }else if(gfx_isKeyDown(SDLK_RIGHT)){
-        if((*move_dir == 0) && (animation_del > ((DELEY_BTW_ANIM/4)*3))){
+        }else if(gfx_isKeyDown(SDLK_RIGHT)){
             *move_dir = 2;
+        }else if(gfx_isKeyDown(SDLK_r)){
+            *move_dir = 4;
         }
     }
     if(gfx_isKeyDown(SDLK_DOWN)){
         *move_dir = 3;
     }
+
 }
 
-void move_events(short int *game_field, short int cur_piece_kind, short int cur_piece_rot,
+void move_events(short int *game_field, short int cur_piece_kind, short int *cur_piece_rot,
         short int piece_left_top_bt_right[4], short int move_dir){
     //put everything in move_function + move_dir == 3 - to fall down
     piece_left_top_bt_right[1]++;
     if(move_dir == 1){
         piece_left_top_bt_right[0]--;
         if((piece_left_top_bt_right[0] < 0) ||
-                (field_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right))){
+                (field_collision(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right))){
             piece_left_top_bt_right[0]++;   
         }
     }else if(move_dir == 2){
         piece_left_top_bt_right[0]++;
         if(((piece_left_top_bt_right[0] + piece_left_top_bt_right[3]) > (FIELD_WIDTH - 1)) || 
-                (field_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right))){
+                (field_collision(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right))){
             piece_left_top_bt_right[0]--;
         }
     }else if(move_dir == 3){
-        while(!butt_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right)){
+        while(!butt_collision(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right)){
             piece_left_top_bt_right[1]++;
         }
+    }else if(move_dir == 4){
+        move_rotation(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right);
+    }
+}
+
+void move_rotation(short int *game_field, short int cur_piece_kind, short int *cur_piece_rot, short int piece_left_top_bt_right[4]){
+    short int prev_rot = *cur_piece_rot, coords_a_prev[2], coords_a_new[2];
+    if(*cur_piece_rot >= 3){
+        *cur_piece_rot = 0;
+    }else{
+        (*cur_piece_rot)++;
+    }
+    find_axe(cur_piece_kind, prev_rot, coords_a_prev);
+    find_axe(cur_piece_kind, *cur_piece_rot, coords_a_new);
+    piece_left_top_bt_right[0] += coords_a_prev[0] - coords_a_new[0];
+    piece_left_top_bt_right[1] += coords_a_prev[1] - coords_a_new[1];
+    if(butt_collision(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right)){
+        *cur_piece_rot = prev_rot;
+        piece_left_top_bt_right[0] -= coords_a_prev[0] - coords_a_new[0];
+        piece_left_top_bt_right[1] -= coords_a_prev[1] - coords_a_new[1];
+    }else{
+        length_of_piece(piece_left_top_bt_right, cur_piece_kind, *cur_piece_rot);
     }
 }
 
@@ -147,6 +171,17 @@ void vars_piece_reset(short int *cur_piece_kind, short int *cur_piece_rot, short
     *cur_piece_rot = 0;
     *move_dir = 0;
     length_of_piece(piece_left_top_bt_right, *cur_piece_kind, *cur_piece_rot);
+}
+
+void find_axe(short int cur_piece_kind, short int cur_piece_rot, short int coords[2]){
+    for(int wdt = 0; wdt < 4; wdt++){
+        for(int hgt = 0; hgt < 4; hgt++){
+            if(pieces[cur_piece_kind][cur_piece_rot][hgt][wdt] == 2){
+                coords[0] = wdt;
+                coords[1] = hgt;
+            }
+        }
+    }
 }
 
 void put_piece_on_place(short int* game_field, short int cur_piece_kind, short int cur_piece_rot, 

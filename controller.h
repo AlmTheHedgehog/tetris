@@ -16,5 +16,6 @@ void move_rotation(short int *game_field, short int cur_piece_kind, short int *c
 void vars_piece_reset(short int *cur_piece_kind, short int *cur_piece_rot, short int piece_left_top_bt_right[4], short int *move_dir);
 void put_piece_on_place(short int* game_field, short int cur_piece_kind, short int cur_piece_rot, short int piece_left_top_bt_right[4]);
 void length_of_piece(short int piece_left_top_bt_right[4], short int cur_piece_kind, short int cur_piece_rot);
+void full_rows_check(short int *game_field);
 
 #endif

@@ -18,6 +18,7 @@ void main_events_check(short int *cur_screen, short int* game_field){
         animation_del = 0;
         if(butt_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right)){
             put_piece_on_place(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right);
+            full_rows_check(game_field);
             vars_piece_reset(&cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, &move_dir);
             if(field_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right)){
                 main_draw(game_field, piece_left_top_bt_right, cur_piece_kind, cur_piece_rot);
@@ -32,8 +33,6 @@ void main_events_check(short int *cur_screen, short int* game_field){
         animation_del++;
     }
     but_press_check(&move_dir, animation_del);
-
-    //check if full row
 }
 
 short int butt_collision(short int* game_field, short int cur_piece_kind, short int cur_piece_rot,
@@ -103,7 +102,6 @@ void but_press_check(short int *move_dir, short int animation_del){
 
 void move_events(short int *game_field, short int cur_piece_kind, short int *cur_piece_rot,
         short int piece_left_top_bt_right[4], short int move_dir){
-    //put everything in move_function + move_dir == 3 - to fall down
     piece_left_top_bt_right[1]++;
     if(move_dir == 1){
         piece_left_top_bt_right[0]--;
@@ -162,6 +160,33 @@ short int field_collision(short int* game_field, short int cur_piece_kind, short
         }
     }
     return 0;
+}
+
+void full_rows_check(short int *game_field){
+    short int row_sum;
+    printf("\n\n");
+    for(int row = 0; row < FIELD_HEIGHT; row++){
+        row_sum = 0;
+        for(int col = 0; col < FIELD_WIDTH; col++){
+            row_sum += *(game_field + col*FIELD_HEIGHT + row);
+        }
+        if(row_sum == FIELD_WIDTH){
+            short int sw_row = row, empty_sum = 1;
+            while((sw_row > 0) && (empty_sum > 0)){
+                empty_sum = 0;
+                for(int col = 0; col < FIELD_WIDTH; col++){
+                    *(game_field + col*FIELD_HEIGHT + sw_row) = *(game_field + col*FIELD_HEIGHT + (sw_row-1));
+                    empty_sum += *(game_field + col*FIELD_HEIGHT + (sw_row-1));
+                }
+                sw_row--;
+            }
+            if(sw_row == 0){
+                for(int col = 0; col < FIELD_WIDTH; col++){
+                    *(game_field + col * FIELD_HEIGHT + sw_row) = 0;
+                }
+            }
+        }
+    }
 }
 
 void vars_piece_reset(short int *cur_piece_kind, short int *cur_piece_rot, short int piece_left_top_bt_right[4], short int *move_dir){

@@ -14,7 +14,7 @@ const short int CELL_SIZE;
 const short int FIELD_LEFT_TOP[2];
 const char pieces[7 /*kind */ ][4 /* rotation */ ][4][4];
 
-void init_matrix(short int* game_field);
+void init_matrix(short int* matrixx, short int row, short int col);
 
 
 #endif

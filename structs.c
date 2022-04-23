@@ -12,10 +12,10 @@
     const short int FIELD_LEFT_TOP[2] = {(SCR_WIDTH/2)-((CELL_SIZE*FIELD_WIDTH)/2) - 1, 0};
 #endif
 
-void init_matrix(short int* game_field){
-    for(int i = 0; i < FIELD_WIDTH; i++){
-        for(int j = 0; j < FIELD_HEIGHT; j++){
-            *(game_field + i*FIELD_HEIGHT + j) = 0;
+void init_matrix(short int* matrixx, short int row, short int col){
+    for(int i = 0; i < row; i++){
+        for(int j = 0; j < col; j++){
+            *(matrixx + i*col + j) = 0;
         }
     }
 }

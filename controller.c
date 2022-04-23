@@ -35,6 +35,13 @@ void main_events_check(short int *cur_screen, short int* game_field){
     but_press_check(&move_dir, animation_del);
 }
 
+void final_events_check(short int *cur_screen){
+    final_draw();
+    if(gfx_isKeyDown(SDLK_RETURN)){
+        *cur_screen = 0;
+    }
+}
+
 short int butt_collision(short int* game_field, short int cur_piece_kind, short int cur_piece_rot,
                             short int piece_left_top_bt_right[4]){
     piece_left_top_bt_right[1]++;
@@ -164,7 +171,6 @@ short int field_collision(short int* game_field, short int cur_piece_kind, short
 
 void full_rows_check(short int *game_field){
     short int row_sum;
-    printf("\n\n");
     for(int row = 0; row < FIELD_HEIGHT; row++){
         row_sum = 0;
         for(int col = 0; col < FIELD_WIDTH; col++){

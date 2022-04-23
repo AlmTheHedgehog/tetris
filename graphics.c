@@ -18,6 +18,14 @@ void main_draw(short int* game_field, short int piece_left_top_bt_right[4], shor
     SDL_Delay(DELEY_BTW_FRAMES);
 }
 
+void final_draw(){
+    gfx_filledRect(0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1, BLACK);
+    gfx_textout((SCR_WIDTH/2)-(SCR_WIDTH/27), SCR_HEIGHT/2, "You lost =(", WHITE);
+    gfx_textout((SCR_WIDTH/2)-(SCR_WIDTH/12), (SCR_HEIGHT/2)+(SCR_HEIGHT/27), "Press ENTER to play again!", WHITE);
+    gfx_updateScreen();
+    SDL_Delay(DELEY_BTW_FRAMES);
+}
+
 void draw_cell(short int width_lvl, short int height_lvl, short int is_axe){// add green color for the center 
     if(is_axe){
         gfx_filledRect(FIELD_LEFT_TOP[0]+(width_lvl*CELL_SIZE), FIELD_LEFT_TOP[1]+(height_lvl*CELL_SIZE),

@@ -18,6 +18,7 @@ int main(){
         if(cur_screen == 0){
             main_events_check(&cur_screen, game_field_ptr);
         }else{
+            final_events_check(&cur_screen);
         }
         exit_check(&cur_screen);
     }

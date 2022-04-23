@@ -5,6 +5,7 @@
 
 void exit_check(short int *cur_screen);
 void main_events_check(short int *cur_screen, short int* game_field);
+void final_events_check(short int *cur_screen);
 short int butt_collision(short int* game_field, short int cur_piece_kind, short int cur_piece_rot, short int piece_left_top_bt_right[4]);
 short int field_collision(short int* game_field, short int cur_piece_kind, short int cur_piece_rot, short int piece_left_top_bt_right[4]);
 short int center_of_from_left(short int cur_piece_kind, short int cur_piece_rot);

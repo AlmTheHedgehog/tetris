@@ -3,9 +3,8 @@
 #include "structs.h"
 #include "graphics.h"
 
-void main_draw_static(short int* game_field){
+void main_draw(short int* game_field, short int piece_left_top_bt_right[4], short int cur_piece_kind, short int cur_piece_rot){
     gfx_filledRect(0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1, BLACK);
-    
     for(int wdt = 0; wdt < FIELD_WIDTH; wdt++){
         for(int hgt = 0; hgt < FIELD_HEIGHT; hgt++){
             if(*(game_field + wdt*FIELD_HEIGHT + hgt) == 1){
@@ -13,7 +12,10 @@ void main_draw_static(short int* game_field){
             }
         }
     }
+    draw_piece(piece_left_top_bt_right, cur_piece_kind, cur_piece_rot);
     draw_border();
+    gfx_updateScreen();
+    SDL_Delay(DELEY_BTW_FRAMES);
 }
 
 void draw_cell(short int width_lvl, short int height_lvl, short int is_axe){// add green color for the center 
@@ -31,18 +33,13 @@ void draw_border(){
         FIELD_LEFT_TOP[1] + (CELL_SIZE * FIELD_HEIGHT), GREEN);
 }
 
-void draw_finish(){
-    gfx_updateScreen();
-    SDL_Delay(DELEY_BTW_FRAMES);
-}
-
-void draw_piece(short int piece_left_top_bt[3], short int cur_piece_kind, short int cur_piece_rot){
+void draw_piece(short int piece_left_top_bt_right[4], short int cur_piece_kind, short int cur_piece_rot){
     for(int wdt = 0; wdt < 4; wdt++){
         for(int hgt = 0; hgt < 4; hgt++){
             if(pieces[cur_piece_kind][cur_piece_rot][hgt][wdt] == 1){
-                draw_cell(wdt + piece_left_top_bt[0], hgt + piece_left_top_bt[1], 0);
+                draw_cell(wdt + piece_left_top_bt_right[0], hgt + piece_left_top_bt_right[1], 0);
             }else if(pieces[cur_piece_kind][cur_piece_rot][hgt][wdt] == 2){
-                draw_cell(wdt + piece_left_top_bt[0], hgt + piece_left_top_bt[1], 1);
+                draw_cell(wdt + piece_left_top_bt_right[0], hgt + piece_left_top_bt_right[1], 1);
             }
         }
     }    

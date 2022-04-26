@@ -32,17 +32,17 @@ void main_events_check(short int *cur_screen, short int* game_field){
         animation_del++;
     }
     but_press_check(&move_dir, animation_del);
-    if(move_dir != 0){
+    if((move_dir != 0) && (*cur_screen == 0)){
         if(but_del_check == 0){
             move_events(game_field, cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, move_dir);
         }
         but_del_check++;
     }
-    if(but_del_check >= BUT_DELEY){
+    if(but_del_check >= BUT_DELEY/3){
         move_dir = 0;
         but_del_check = 0;
-    }else if((but_del_check >= (BUT_DELEY/2)) && ((((move_dir == 1) && (gfx_isKeyDown(SDLK_LEFT))) ||
-            ((move_dir == 2) && (gfx_isKeyDown(SDLK_RIGHT)))) || ((move_dir == 4) && (gfx_isKeyDown(SDLK_r))))){
+    }else if((*cur_screen == 0) && ((but_del_check >= (BUT_DELEY/4)) && ((((move_dir == 1) && (gfx_isKeyDown(SDLK_LEFT))) ||
+            ((move_dir == 2) && (gfx_isKeyDown(SDLK_RIGHT)))) || ((move_dir == 4) && (gfx_isKeyDown(SDLK_r)))))){
         but_del_check = 1;
         move_events(game_field, cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, move_dir);
     }
@@ -123,7 +123,7 @@ void length_of_piece(short int piece_left_top_bt_right[4], short int cur_piece_k
 
 void but_press_check(short int *move_dir, short int animation_del){
     //move_dir 0-none, 1-left, 2-right, 3-down, 4-rotate
-    if((*move_dir == 0) && (animation_del > ((DELEY_BTW_ANIM/4)*3))){
+    if(*move_dir == 0){
         if(gfx_isKeyDown(SDLK_LEFT)){
             *move_dir = 1;
         }else if(gfx_isKeyDown(SDLK_RIGHT)){
@@ -156,8 +156,9 @@ void move_events(short int *game_field, short int cur_piece_kind, short int *cur
         while(!butt_collision(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right)){
             piece_left_top_bt_right[1]++;
             main_draw(game_field, piece_left_top_bt_right, cur_piece_kind, *cur_piece_rot);
+            SDL_Delay(11);
         }
-        SDL_Delay((BUT_DELEY*3)/4);
+        SDL_Delay(BUT_DELEY/7);
     }else if(move_dir == 4){
         move_rotation(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right);
     }

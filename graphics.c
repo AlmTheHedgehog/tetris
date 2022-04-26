@@ -15,7 +15,7 @@ void main_draw(short int* game_field, short int piece_left_top_bt_right[4], shor
     draw_piece(piece_left_top_bt_right, cur_piece_kind, cur_piece_rot);
     draw_border();
     gfx_updateScreen();
-    SDL_Delay(DELEY_BTW_FRAMES);
+    //SDL_Delay(DELEY_BTW_FRAMES);
 }
 
 void final_draw(){

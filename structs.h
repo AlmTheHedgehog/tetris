@@ -7,8 +7,8 @@
 //Graph consts
 #define SCR_WIDTH 1280
 #define SCR_HEIGHT 720
-#define DELEY_BTW_FRAMES 10  //10 - standart
-#define DELEY_BTW_ANIM 40  //40 - standart
+#define DELEY_BTW_FRAMES 0  //10 - standart
+#define DELEY_BTW_ANIM 200  //40 - standart
 
 const short int CELL_SIZE;
 const short int FIELD_LEFT_TOP[2];

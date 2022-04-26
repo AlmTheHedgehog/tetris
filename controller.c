@@ -12,27 +12,40 @@ void exit_check(short int *cur_screen){
 
 void main_events_check(short int *cur_screen, short int* game_field){
     static short int cur_piece_kind = 0, cur_piece_rot = 0, piece_left_top_bt_right[4] = {(FIELD_WIDTH / 2) - 1, 0, 1, 1},
-                     animation_del = 0, move_dir = 0;
+                     animation_del = 0, move_dir = 0, but_del_check = 0;
     main_draw(game_field, piece_left_top_bt_right, cur_piece_kind, cur_piece_rot);
     if(animation_del >= DELEY_BTW_ANIM){   
         animation_del = 0;
         if(butt_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right)){
             put_piece_on_place(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right);
             full_rows_check(game_field);
-            vars_piece_reset(&cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, &move_dir);
+            vars_piece_reset(&cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, &move_dir, &but_del_check);
             if(field_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right)){
                 main_draw(game_field, piece_left_top_bt_right, cur_piece_kind, cur_piece_rot);
                 init_matrix(game_field, FIELD_WIDTH, FIELD_HEIGHT);
                 *cur_screen = 1;
             }
         }else{
-            move_events(game_field, cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, move_dir);
-            move_dir = 0;
+            piece_left_top_bt_right[1]++;
         }
     }else{
         animation_del++;
     }
     but_press_check(&move_dir, animation_del);
+    if(move_dir != 0){
+        if(but_del_check == 0){
+            move_events(game_field, cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, move_dir);
+        }
+        but_del_check++;
+    }
+    if(but_del_check >= BUT_DELEY){
+        move_dir = 0;
+        but_del_check = 0;
+    }else if((but_del_check >= (BUT_DELEY/2)) && ((((move_dir == 1) && (gfx_isKeyDown(SDLK_LEFT))) ||
+            ((move_dir == 2) && (gfx_isKeyDown(SDLK_RIGHT)))) || ((move_dir == 4) && (gfx_isKeyDown(SDLK_r))))){
+        but_del_check = 1;
+        move_events(game_field, cur_piece_kind, &cur_piece_rot, piece_left_top_bt_right, move_dir);
+    }
 }
 
 void final_events_check(short int *cur_screen){
@@ -50,6 +63,24 @@ short int butt_collision(short int* game_field, short int cur_piece_kind, short 
         return 1;
     }else{
         piece_left_top_bt_right[1]--;
+    }
+    if((piece_left_top_bt_right[2] + piece_left_top_bt_right[1]) == (FIELD_HEIGHT - 1)){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+short int butt_collision_rr(short int* game_field, short int cur_piece_kind, short int cur_piece_rot,
+                            short int piece_left_top_bt_right[4]){
+    if(piece_left_top_bt_right[0] + piece_left_top_bt_right[3] > (FIELD_WIDTH - 1)){
+        return 1;
+    }
+    if(piece_left_top_bt_right[0] < 0){
+        return 1;
+    }
+    if(field_collision(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right)){
+        return 1;
+    }else{
     }
     if((piece_left_top_bt_right[2] + piece_left_top_bt_right[1]) == (FIELD_HEIGHT - 1)){
         return 1;
@@ -109,7 +140,6 @@ void but_press_check(short int *move_dir, short int animation_del){
 
 void move_events(short int *game_field, short int cur_piece_kind, short int *cur_piece_rot,
         short int piece_left_top_bt_right[4], short int move_dir){
-    piece_left_top_bt_right[1]++;
     if(move_dir == 1){
         piece_left_top_bt_right[0]--;
         if((piece_left_top_bt_right[0] < 0) ||
@@ -125,7 +155,9 @@ void move_events(short int *game_field, short int cur_piece_kind, short int *cur
     }else if(move_dir == 3){
         while(!butt_collision(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right)){
             piece_left_top_bt_right[1]++;
+            main_draw(game_field, piece_left_top_bt_right, cur_piece_kind, *cur_piece_rot);
         }
+        SDL_Delay((BUT_DELEY*3)/4);
     }else if(move_dir == 4){
         move_rotation(game_field, cur_piece_kind, cur_piece_rot, piece_left_top_bt_right);
     }
@@ -142,11 +174,11 @@ void move_rotation(short int *game_field, short int cur_piece_kind, short int *c
     find_axe(cur_piece_kind, *cur_piece_rot, coords_a_new);
     piece_left_top_bt_right[0] += coords_a_prev[0] - coords_a_new[0];
     piece_left_top_bt_right[1] += coords_a_prev[1] - coords_a_new[1];
-    if(butt_collision(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right)){
+    length_of_piece(piece_left_top_bt_right, cur_piece_kind, *cur_piece_rot);
+    if(butt_collision_rr(game_field, cur_piece_kind, *cur_piece_rot, piece_left_top_bt_right)){
         *cur_piece_rot = prev_rot;
         piece_left_top_bt_right[0] -= coords_a_prev[0] - coords_a_new[0];
         piece_left_top_bt_right[1] -= coords_a_prev[1] - coords_a_new[1];
-    }else{
         length_of_piece(piece_left_top_bt_right, cur_piece_kind, *cur_piece_rot);
     }
 }
@@ -195,12 +227,14 @@ void full_rows_check(short int *game_field){
     }
 }
 
-void vars_piece_reset(short int *cur_piece_kind, short int *cur_piece_rot, short int piece_left_top_bt_right[4], short int *move_dir){
+void vars_piece_reset(short int *cur_piece_kind, short int *cur_piece_rot, short int piece_left_top_bt_right[4], short int *move_dir, 
+                                                                                                        short int *but_del_check){
     *cur_piece_kind = rand() % 7;
     piece_left_top_bt_right[0] = (FIELD_WIDTH / 2) - center_of_from_left(*cur_piece_kind, *cur_piece_rot);
     piece_left_top_bt_right[1] = 0;
     *cur_piece_rot = 0;
     *move_dir = 0;
+    *but_del_check = 0;
     length_of_piece(piece_left_top_bt_right, *cur_piece_kind, *cur_piece_rot);
 }
 
